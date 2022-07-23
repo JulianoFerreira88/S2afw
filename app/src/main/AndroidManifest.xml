@@ -10,6 +10,11 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.S2afw">
         <activity
+                android:name=".ChartActivity"
+                android:label="@string/title_activity_chart"
+                android:theme="@style/Theme.S2afw.NoActionBar">
+        </activity>
+        <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/Theme.S2afw.NoActionBar">
