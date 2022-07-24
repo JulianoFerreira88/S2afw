@@ -1,10 +1,12 @@
 package com.github.s2afw.util;
 
+import android.graphics.Color;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.s2afw.model.Relatorio;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class RelatorioToBarData {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public BarData getBarData() {
         BarData barData = new BarData();
+
         List<BarEntry> entries = new ArrayList<>();
 
         relatorio.getData().forEach(new BiConsumer<String, Float>() {
@@ -30,7 +33,14 @@ public class RelatorioToBarData {
                 entries.add(e);
             }
         });
-        BarDataSet dataSet = new BarDataSet(entries, relatorio.getNome());
+        BarDataSet dataSet = new BarDataSet(entries, null);
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf(value);
+            }
+        });
         barData.addDataSet(dataSet);
         return barData;
     }
