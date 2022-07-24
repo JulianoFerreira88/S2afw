@@ -1,6 +1,7 @@
 package com.github.s2afw;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.RequiresApi;
@@ -9,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.renderer.Renderer;
 import com.github.mikephil.charting.renderer.YAxisRenderer;
 import com.github.s2afw.model.Relatorio;
 import com.github.s2afw.util.RelatorioToBarData;
@@ -31,12 +33,11 @@ public class ChartActivity extends AppCompatActivity {
         chart = (BarChart) findViewById(R.id.chart);
         chart.setData(new RelatorioToBarData(relatorio).getBarData());
         chart.getDescription().setEnabled(false);
-        chart.setDrawBarShadow(false);
-        chart.setFitBars(true);
-
+        chart.getRendererRightYAxis().getPaintAxisLabels().setColor(Color.WHITE);
+        chart.setBackgroundColor(getResources().getColor(R.color.bg_chart_color));
         XAxis xAxis = chart.getXAxis();
-        xAxis.setGranularity(1f);
-        xAxis.setAvoidFirstLastClipping(false);
+
+        //xAxis.setTextColor(Color.WHITE);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override

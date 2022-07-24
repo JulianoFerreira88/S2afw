@@ -34,7 +34,9 @@ public class RelatorioToBarData {
             }
         });
         BarDataSet dataSet = new BarDataSet(entries, null);
-        dataSet.setColor(Color.BLUE);
+        //dataSet.setValueTextColor(Color.WHITE);
+
+        dataSet.setColor(Color.rgb(153,153,255));
         dataSet.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -42,6 +44,7 @@ public class RelatorioToBarData {
             }
         });
         barData.addDataSet(dataSet);
+
         return barData;
     }
 }
