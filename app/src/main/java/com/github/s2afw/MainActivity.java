@@ -6,16 +6,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.github.s2afw.components.S2Button;
+import com.github.s2afw.components.S2ButtonClickListener;
 import com.github.s2afw.model.Relatorio;
+import com.github.s2afw.model.service.RelatorioDao;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements Callback<Relatorio> {
     private LinearLayout contentMainRoot;
 
     @Override
@@ -24,21 +33,38 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:8081/chart")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(5, 5, 5, 5);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.1.200:8081/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        RelatorioDao dao = retrofit.create(RelatorioDao.class);
+        dao.getRelatorios().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                List<String> relatorios = response.body();
+                for (int i = 0; i < relatorios.size(); i++) {
+                    contentMainRoot.addView(new S2Button(MainActivity.this, relatorios.get(i), new S2ButtonClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            S2Button btn = (S2Button) v;
+                            //Toast.makeText(MainActivity.this, btn.getText(), Toast.LENGTH_SHORT).show();
+                            dao.getRelatorio(btn.getText().toString()).enqueue(MainActivity.this);
+                        }
+                    }), params);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                AlertDialog.Builder d = new AlertDialog.Builder(MainActivity.this);
+                d.setTitle("Error!!").setMessage(t.getMessage()).show();
+            }
+        });
+
+
         contentMainRoot = findViewById(R.id.contentMainRoot);
-        contentMainRoot.addView(new S2Button(this, "Botao", v -> {
-            S2Button btn = (S2Button) v;
-            Intent i = new Intent(MainActivity.this, ChartActivity.class);
-            Relatorio relatorio = new Relatorio("Relatorio", null);
-            i.putExtra("relatorio", relatorio);
-            startActivity(i);
-        }), params);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,5 +95,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResponse(Call<Relatorio> call, Response<Relatorio> response) {
+        Relatorio r = response.body();
+        onRelatorio(r);
+    }
+
+    private void onRelatorio(Relatorio r) {
+        Intent i = new Intent(MainActivity.this, ChartActivity.class);
+        i.putExtra("relatorio", r);
+        startActivity(i);
+    }
+
+    @Override
+    public void onFailure(Call<Relatorio> call, Throwable t) {
+        AlertDialog.Builder d = new AlertDialog.Builder(this);
+        d.setTitle("Error!!").setMessage(t.getMessage()).show();
     }
 }

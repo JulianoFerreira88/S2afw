@@ -18,6 +18,6 @@ public class S2Button extends androidx.appcompat.widget.AppCompatButton {
         this.setPadding(5, 5, 5, 5);
         this.setOnClickListener(onCLick);
         this.setBackgroundColor(getResources().getColor(R.color.S2TextView));
-
+        this.setTextColor(getResources().getColor(R.color.white));
     }
 }

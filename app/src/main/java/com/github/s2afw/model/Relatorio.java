@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Relatorio implements Serializable {
-    private String name;
-    private HashMap<String, Object> data;
+    private String nome;
+    private HashMap<String, Float> data;
 
     public Relatorio() {
     }
@@ -14,7 +14,7 @@ public class Relatorio implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Relatorio{");
-        sb.append("name='").append(name).append('\'');
+        sb.append("name='").append(nome).append('\'');
         sb.append(", data=").append(data);
         sb.append('}');
         return sb.toString();
@@ -25,32 +25,32 @@ public class Relatorio implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Relatorio relatorio = (Relatorio) o;
-        return Objects.equals(name, relatorio.name);
+        return Objects.equals(nome, relatorio.nome);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(nome);
     }
 
-    public Relatorio(String name, HashMap<String, Object> data) {
-        this.name = name;
+    public Relatorio(String name, HashMap<String, Float> data) {
+        this.nome = name;
         this.data = data;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public HashMap<String, Object> getData() {
+    public HashMap<String, Float> getData() {
         return data;
     }
 
-    public void setData(HashMap<String, Object> data) {
+    public void setData(HashMap<String, Float> data) {
         this.data = data;
     }
 }
