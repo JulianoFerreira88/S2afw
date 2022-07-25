@@ -56,23 +56,30 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
                 @Override
                 public void onClick(View v) {
                     S2Button btn = (S2Button) v;
-                    dao.getRelatorio(btn.getText().toString()).enqueue(new Callback<Relatorio>() {
-                        @Override
-                        public void onResponse(Call<Relatorio> call, Response<Relatorio> response) {
-                            Relatorio r = response.body();
-                            Intent i = new Intent(SetorActivity.this, ChartActivity.class);
-                            i.putExtra("relatorio", r);
-                            startActivity(i);
-                        }
+                    try {
+                        dao.getRelatorio(btn.getText().toString()).enqueue(new Callback<Relatorio>() {
+                            @Override
+                            public void onResponse(Call<Relatorio> call, Response<Relatorio> response) {
+                                Relatorio r = response.body();
+                                Intent i = new Intent(SetorActivity.this, ChartActivity.class);
+                                i.putExtra("relatorio", r);
+                                startActivity(i);
+                            }
 
-                        @Override
-                        public void onFailure(Call<Relatorio> call, Throwable t) {
-                            AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
-                            d.setTitle("Error!!!");
-                            d.setMessage(t.getMessage());
-                            d.show();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<Relatorio> call, Throwable t) {
+                                AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
+                                d.setTitle("Error!!!");
+                                d.setMessage(t.getMessage());
+                                d.show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
+                        d.setTitle("Error!!!");
+                        d.setMessage(e.getMessage());
+                        d.show();
+                    }
 
                 }
             }), params);
