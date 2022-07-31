@@ -19,6 +19,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SetorActivity extends AppCompatActivity implements Callback<List<String>> {
@@ -39,7 +40,7 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
         params.setMargins(5, 10, 5, 10);
         setTitle(this.nmSetor);
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.200:8081/")
+                .baseUrl("http://node109038-afw-api.jelastic.saveincloud.net/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         dao = retrofit.create(RelatorioDao.class);
@@ -51,6 +52,7 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
     @Override
     public void onResponse(Call<List<String>> call, Response<List<String>> response) {
         List<String> relatorios = response.body();
+        Collections.sort(relatorios);
         relatorios.forEach(r -> {
             rootSetor.addView(new S2Button(this, r, new S2ButtonClickListener() {
                 @Override

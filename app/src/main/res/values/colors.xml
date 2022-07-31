@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="S2TextView">#FBFBFB</color>
+    <color name="S2TextView">#E4DADADA</color>
     <color name="bg_chart_color">#FAF5F5</color>
     <color name="bg_bar_color">#9999FF</color>
 </resources>

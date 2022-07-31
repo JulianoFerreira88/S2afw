@@ -29,6 +29,7 @@ public class RelatorioToBarData {
         relatorio.getData().forEach(new BiConsumer<String, Float>() {
             @Override
             public void accept(String s, Float aFloat) {
+
                 BarEntry e = new BarEntry(Float.parseFloat(s), aFloat);
                 entries.add(e);
             }
@@ -36,7 +37,7 @@ public class RelatorioToBarData {
         BarDataSet dataSet = new BarDataSet(entries, null);
         //dataSet.setValueTextColor(Color.WHITE);
 
-        dataSet.setColor(Color.rgb(153,153,255));
+        dataSet.setColor(Color.rgb(153, 153, 255));
         dataSet.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {

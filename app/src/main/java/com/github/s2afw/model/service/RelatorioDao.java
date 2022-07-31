@@ -8,12 +8,12 @@ import retrofit2.http.Path;
 import java.util.List;
 
 public interface RelatorioDao {
-    @GET("chart/{nome_relatorio}")
+    @GET("chart/setores/relatorio/{nome_relatorio}")
     Call<Relatorio> getRelatorio(@Path("nome_relatorio") String nome_relatorio);
 
-    @GET("chart/")
-    Call<List<String>> getRelatorios();
-
-    @GET("chart/setor/{nm_setor}")
+    @GET("chart/setores/{nm_setor}")
     Call<List<String>> getRelatorios(@Path("nm_setor") String nm_setor);
+
+    @GET("chart/setores")
+    Call<List<String>> getSetores();
 }
