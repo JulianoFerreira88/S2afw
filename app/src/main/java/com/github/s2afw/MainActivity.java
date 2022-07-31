@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
         contentMainRoot = findViewById(R.id.contentMainRoot);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(5, 10, 5, 10);
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://node109038-afw-api.jelastic.saveincloud.net/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        dao = retrofit.create(RelatorioDao.class);
         try {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://node109038-afw-api.jelastic.saveincloud.net/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            dao = retrofit.create(RelatorioDao.class);
+
             dao.getSetores().enqueue(new Callback<List<String>>() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
