@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.github.s2afw.components.S2Button;
 import com.github.s2afw.components.S2ButtonClickListener;
+import com.github.s2afw.components.S2Dialog;
 import com.github.s2afw.model.Relatorio;
 import com.github.s2afw.model.service.RelatorioDao;
 import retrofit2.Call;
@@ -27,6 +28,7 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
     private LinearLayout rootSetor;
     private LinearLayout.LayoutParams params;
     private RelatorioDao dao;
+    private S2Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,10 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         this.nmSetor = (String) getIntent().getExtras().get("setor");
+        dialog = new S2Dialog(this);
+        dialog.setTitle("Aguarde!!");
+        dialog.setMessage("Buscando informações.");
+        dialog.show();
         rootSetor = (LinearLayout) findViewById(R.id.rootSetor);
         params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(5, 10, 5, 10);
@@ -51,48 +57,51 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-        List<String> relatorios = response.body();
-        Collections.sort(relatorios);
-        relatorios.forEach(r -> {
-            rootSetor.addView(new S2Button(this, r, new S2ButtonClickListener() {
-                @Override
-                public void onClick(View v) {
-                    S2Button btn = (S2Button) v;
-                    try {
-                        dao.getRelatorio(btn.getText().toString()).enqueue(new Callback<Relatorio>() {
-                            @Override
-                            public void onResponse(Call<Relatorio> call, Response<Relatorio> response) {
-                                Relatorio r = response.body();
-                                Intent i = new Intent(SetorActivity.this, ChartActivity.class);
-                                i.putExtra("relatorio", r);
-                                startActivity(i);
-                            }
+        dialog.hide();
+        if (response.code() == 200) {
+            List<String> relatorios = response.body();
+            Collections.sort(relatorios);
+            relatorios.forEach(r -> {
+                rootSetor.addView(new S2Button(this, r, new S2ButtonClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        S2Button btn = (S2Button) v;
+                        try {
+                            dao.getRelatorio(btn.getText().toString()).enqueue(new Callback<Relatorio>() {
+                                @Override
+                                public void onResponse(Call<Relatorio> call, Response<Relatorio> response) {
+                                    Relatorio r = response.body();
+                                    Intent i = new Intent(SetorActivity.this, ChartActivity.class);
+                                    i.putExtra("relatorio", r);
+                                    startActivity(i);
+                                }
 
-                            @Override
-                            public void onFailure(Call<Relatorio> call, Throwable t) {
-                                AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
-                                d.setTitle("Error!!!");
-                                d.setMessage(t.getMessage());
-                                d.show();
-                            }
-                        });
-                    } catch (Exception e) {
-                        AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
-                        d.setTitle("Error!!!");
-                        d.setMessage(e.getMessage());
-                        d.show();
+                                @Override
+                                public void onFailure(Call<Relatorio> call, Throwable t) {
+                                    AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
+                                    d.setTitle("Error!!!");
+                                    d.setMessage(t.getMessage());
+                                    d.show();
+                                }
+                            });
+                        } catch (Exception e) {
+                            AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
+                            d.setTitle("Error!!!");
+                            d.setMessage(e.getMessage());
+                            d.show();
+                        }
+
                     }
-
-                }
-            }), params);
-        });
+                }), params);
+            });
+        }
     }
 
     @Override
     public void onFailure(Call<List<String>> call, Throwable t) {
-        AlertDialog.Builder d = new AlertDialog.Builder(this);
-        d.setTitle("Error!!!");
-        d.setMessage(t.getMessage());
-        d.show();
+        dialog = new S2Dialog(this);
+        dialog.setTitle("Error!!");
+        dialog.setMessage(t.getMessage());
+        dialog.show();
     }
 }

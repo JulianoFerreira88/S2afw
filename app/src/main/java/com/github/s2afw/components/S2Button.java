@@ -2,8 +2,6 @@ package com.github.s2afw.components;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import com.github.s2afw.R;
 
 public class S2Button extends androidx.appcompat.widget.AppCompatButton {

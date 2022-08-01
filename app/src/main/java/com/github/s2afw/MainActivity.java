@@ -1,5 +1,6 @@
 package com.github.s2afw;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.github.s2afw.components.S2Button;
 import com.github.s2afw.components.S2ButtonClickListener;
+import com.github.s2afw.components.S2Dialog;
 import com.github.s2afw.model.service.RelatorioDao;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +29,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private LinearLayout contentMainRoot;
     private RelatorioDao dao;
+    private S2Dialog dialg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        dialg = new S2Dialog(this);
+        dialg.setTitle("Aguarde!!");
+        dialg.setMessage("Buscando dados!!");
+        dialg.show();
+
+
         contentMainRoot = findViewById(R.id.contentMainRoot);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
         params.setMargins(5, 10, 5, 10);
@@ -48,20 +57,35 @@ public class MainActivity extends AppCompatActivity {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                    List<String> setores = response.body();
-                    Collections.sort(setores);
-                    setores.forEach(s -> {
-                        S2Button btn = new S2Button(MainActivity.this, s, new S2ButtonClickListener() {
+                    dialg.hide();
+                    if (response.code() == 200) {
+                        List<String> setores = response.body();
+                        Collections.sort(setores);
+                        setores.forEach(s -> {
+                            S2Button btn = new S2Button(MainActivity.this, s, new S2ButtonClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    S2Button btn = (S2Button) v;
+                                    onBtnSetorClicked(btn.getText().toString());
+                                }
+                            });
+
+                            contentMainRoot.addView(btn, params);
+                        });
+                    } else {
+
+                        dialg.setTitle("Error!!!");
+                        dialg.setMessage("Status Error: " + response.code());
+                        dialg.setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
-                            public void onClick(View v) {
-                                S2Button btn = (S2Button) v;
-                                onBtnSetorClicked(btn.getText().toString());
+                            public void onDismiss(DialogInterface dialog) {
+                                MainActivity.this.finish();
                             }
                         });
+                        dialg.show();
 
 
-                        contentMainRoot.addView(btn, params);
-                    });
+                    }
                 }
 
                 @Override
