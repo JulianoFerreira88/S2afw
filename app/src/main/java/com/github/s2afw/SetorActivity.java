@@ -65,11 +65,16 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
                 rootSetor.addView(new S2Button(this, r, new S2ButtonClickListener() {
                     @Override
                     public void onClick(View v) {
+                        S2Dialog d = new S2Dialog(SetorActivity.this);
+                        d.setTitle("Buscando Dados!!!");
+                        d.setMessage("Aguarde...");
+                        d.show();
                         S2Button btn = (S2Button) v;
                         try {
                             dao.getRelatorio(btn.getText().toString()).enqueue(new Callback<Relatorio>() {
                                 @Override
                                 public void onResponse(Call<Relatorio> call, Response<Relatorio> response) {
+                                    d.hide();
                                     Relatorio r = response.body();
                                     Intent i = new Intent(SetorActivity.this, ChartActivity.class);
                                     i.putExtra("relatorio", r);
@@ -85,7 +90,6 @@ public class SetorActivity extends AppCompatActivity implements Callback<List<St
                                 }
                             });
                         } catch (Exception e) {
-                            AlertDialog.Builder d = new AlertDialog.Builder(SetorActivity.this);
                             d.setTitle("Error!!!");
                             d.setMessage(e.getMessage());
                             d.show();
